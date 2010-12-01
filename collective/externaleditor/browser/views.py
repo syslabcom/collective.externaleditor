@@ -21,6 +21,7 @@ class ExternalEditorEnabledView(BrowserView):
         """
         return (self.isEnabledOnThisContentType()
                 and self.isActivatedInMemberProperty()
+                and self.isActivatedInSiteProperty()
                 and self.isWebdavEnabled()
                 and not self.isObjectLocked()
                 and not self.isObjectTemporary()
@@ -32,14 +33,13 @@ class ExternalEditorEnabledView(BrowserView):
         """
         """
         #
-        _siteroot = queryUtility(IPloneSiteRoot)
-        return IExternalEditorSchema(_siteroot)
+        return queryUtility(IPloneSiteRoot)
 
     def portalTypesAware(self):
         """
         """
         #
-        return getattr(self._options, 'externaleditor_enabled_types', [])
+        return getattr(IExternalEditorSchema(self._options), 'externaleditor_enabled_types', [])
 
     def isEnabledOnThisContentType(self):
         """
@@ -64,6 +64,12 @@ class ExternalEditorEnabledView(BrowserView):
             return False
         #
         return True
+
+    def isActivatedInSiteProperty(self):
+        """
+        """
+        #
+        return getattr(IExternalEditorSchema(self._options), 'ext_editor', False)
 
     def isObjectLocked(self):
         """
@@ -126,12 +132,14 @@ class ExternalEditView(ExternalEditorEnabledView):
                 '%s/externalEdit_/%s' % (aq_parent(aq_inner(self.context)).absolute_url(),
                                          url_quote(self.context.getId())))
         #
-        if not self.isActivatedInMemberProperty():
+        if not self.isActivatedInSiteProperty():
+            status = _(u"External Editor site property is not activated. Please contact your administrator.")
+        elif not self.isActivatedInMemberProperty():
             status = _(u"External Editor property in your preferences is not activated.")
         elif self.isObjectLocked():
             status = _(u"This item is locked.")
         else :
-            status = _(u"You are not allowed to use external editor on this item.")
+            status = _(u"You are not allowed to use External Editor on this item.")
         #
         redirecturl = self.context.absolute_url()+'/view'
         self.request.response.redirect(redirecturl)
