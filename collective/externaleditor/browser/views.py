@@ -129,7 +129,7 @@ class ExternalEditView(ExternalEditorEnabledView):
         #
         if self.available():
             return self.context.REQUEST['RESPONSE'].redirect(
-                '%s/externalEdit_/%s' % (aq_parent(aq_inner(self.context)).absolute_url(),
+                '%s/externalEdit_/%s.zem' % (aq_parent(aq_inner(self.context)).absolute_url(),
                                          url_quote(self.context.getId())))
         #
         if not self.isActivatedInSiteProperty():
