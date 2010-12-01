@@ -10,11 +10,11 @@ from zope.schema import Choice
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.formlib.schema import ProxyFieldProperty
 from Products.CMFDefault.formlib.schema import SchemaAdapterBase
-from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 
 from plone.app.controlpanel.form import ControlPanelForm
 
+from collective.externaleditor import ExternalEditorMessageFactory as _
 
 class IExternalEditorSchema(Interface):
     """
