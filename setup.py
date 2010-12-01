@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.0'
+version = '1.0.0'
 
 setup(name='collective.externaleditor',
       version=version,
@@ -25,6 +25,7 @@ setup(name='collective.externaleditor',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'Products.ExternalEditor>=1.1.0dev',
           # -*- Extra requirements: -*-
       ],
       entry_points="""
