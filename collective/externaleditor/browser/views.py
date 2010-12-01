@@ -16,14 +16,14 @@ from collective.externaleditor import ExternalEditorMessageFactory as _
 class ExternalEditorEnabledView(BrowserView):
     """
     """
-    def available(self):
+    def available(self, bypasslock = False):
         """
         """
         return (self.isEnabledOnThisContentType()
                 and self.isActivatedInMemberProperty()
                 and self.isActivatedInSiteProperty()
                 and self.isWebdavEnabled()
-                and not self.isObjectLocked()
+                and not (self.isObjectLocked() and not bypasslock)
                 and not self.isObjectTemporary()
                 and not self.isStructuralFolder()
                 and self.isExternalEditLink_())
@@ -127,7 +127,7 @@ class ExternalEditView(ExternalEditorEnabledView):
         """
         """
         #
-        if self.available():
+        if self.available(bypasslock = True):
             return self.context.REQUEST['RESPONSE'].redirect(
                 '%s/externalEdit_/%s.zem' % (aq_parent(aq_inner(self.context)).absolute_url(),
                                          url_quote(self.context.getId())))
