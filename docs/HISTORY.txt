@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0dev (unreleased)
--------------------
+1.0.0 - 2010-12-03
+------------------
 
-- Initial release
+- Initial release [f10w]
