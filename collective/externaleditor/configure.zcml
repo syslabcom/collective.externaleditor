@@ -7,6 +7,7 @@
     i18n_domain="collective.externaleditor">
 
   <five:registerPackage package="." initialize=".initialize" />
+  <include package="Products.CMFCore" file="permissions.zcml" />
 
   <cmf:registerDirectory name="externaleditor"/>
 
