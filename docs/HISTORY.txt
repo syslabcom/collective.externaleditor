@@ -2,9 +2,10 @@ Changelog
 =========
 
 1.0.2 (development)
-------------------
+-------------------
+
 - use the recommended way of including Products.CMFCore permissions
-in configure.zcml so it works for all Plone versions [jcerjak]
+  in configure.zcml so it works for all Plone versions [jcerjak]
 
 1.0.1 - 2012-02-10
 ------------------
