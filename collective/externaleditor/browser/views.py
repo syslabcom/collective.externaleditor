@@ -93,12 +93,10 @@ class ExternalEditorEnabledView(BrowserView):
         """
         """
         # Temporary content cannot be changed through EE (raises AttributeError)
-        portal_factory = getToolByName(self.context, 'portal_factory')
-        #
-        if portal_factory.isTemporary(self.context):
-            return True
-        #
-        return False
+        portal_factory = getToolByName(self.context, 'portal_factory', None)
+        if portal_factory is None:
+            return False
+        return portal_factory.isTemporary(self.context)
 
     def isStructuralFolder(self):
         """
