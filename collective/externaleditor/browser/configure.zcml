@@ -28,6 +28,14 @@
       />
 
   <browser:page
+      for="plone.dexterity.interfaces.IDexterityItem"
+      name="external_edit"
+      class=".views.DXExternalEditView"
+      permission="cmf.ModifyPortalContent"
+      layer="collective.externaleditor.interfaces.IExternalEditorLayer"
+      />
+
+  <browser:page
       for="*"
       name="externalEditorEnabled"
       class=".views.ExternalEditorEnabledView"

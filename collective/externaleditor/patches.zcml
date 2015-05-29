@@ -1,0 +1,16 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:monkey="http://namespaces.plone.org/monkey"
+    i18n_domain="collective.externaleditor">
+
+  <include package="collective.monkeypatcher" />
+
+  <monkey:patch
+      description="Adds dexterity support to Products.ExternalEditor"
+      class="Products.ExternalEditor.ExternalEditor"
+      original="_write_metadata"
+      replacement=".patches.patched_write_metadata"
+      preserveOriginal="True"
+      />
+
+</configure>

@@ -1,6 +1,6 @@
 from Acquisition import aq_parent, aq_inner
 from zope.component import queryUtility
-from zExceptions import Unauthorized
+from AccessControl.SecurityManagement import getSecurityManager
 
 from Products.Five import BrowserView
 from Products.CMFCore.utils import getToolByName
@@ -8,7 +8,10 @@ from Products.CMFPlone.utils import webdav_enabled
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.PythonScripts.standard import url_quote
 from Products.statusmessages.interfaces import IStatusMessage
+from plone.rfc822.interfaces import IPrimaryFieldInfo
 
+from Products.ExternalEditor.ExternalEditor import wl_isLocked
+from Products.ExternalEditor import ExternalEditor
 from collective.externaleditor.browser.controlpanel import IExternalEditorSchema
 from collective.externaleditor import ExternalEditorMessageFactory as _
 
@@ -126,9 +129,7 @@ class ExternalEditView(ExternalEditorEnabledView):
         """
         #
         if self.available(bypasslock = True):
-            return self.context.REQUEST['RESPONSE'].redirect(
-                '%s/externalEdit_/%s.zem' % (aq_parent(aq_inner(self.context)).absolute_url(),
-                                         url_quote(self.context.getId())))
+            return self.editview()
         #
         if not self.isActivatedInSiteProperty():
             status = _(u"External Editor site property is not activated. Please contact your administrator.")
@@ -142,3 +143,69 @@ class ExternalEditView(ExternalEditorEnabledView):
         redirecturl = self.context.absolute_url()+'/view'
         self.request.response.redirect(redirecturl)
         IStatusMessage(self.request).addStatusMessage(status, type='error')
+
+    def editview(self):
+        """ Redirect to Products.ExternalEditor """
+        return self.context.REQUEST['RESPONSE'].redirect(
+            '%s/externalEdit_/%s.zem' % (
+                aq_parent(aq_inner(self.context)).absolute_url(),
+                url_quote(self.context.getId())))
+
+
+class DXExternalEditView(ExternalEditView):
+
+    def editview(self):
+        FALLBACK_CONTENTTYPE = 'application/octet-stream'
+        request = self.request
+        response = request.response
+        metadata = []
+        ob = self.context
+        editor = ExternalEditor()
+        editor.REQUEST = request
+
+        metadata.append('url:%s' % ob.absolute_url())
+        metadata.append('meta_type:%s' % ob.portal_type)
+        metadata.append('title:%s' % ob.title)
+
+        metadata.append('cookie:%s' % request.environ.get(
+            'HTTP_COOKIE', ''))
+
+        if wl_isLocked(ob):
+            security = getSecurityManager()
+            # Object is locked, send down the lock token
+            # owned by this user (if any)
+            user_id = security.getUser().getId()
+            for lock in ob.wl_lockValues():
+                if not lock.isValid():
+                    continue
+                creator = lock.getCreator()
+                if creator and creator[1] == user_id:
+                    # Found a lock for this user, so send it
+                    metadata.append('lock-token:%s' % lock.getLockToken())
+                    if request.get('borrow_lock'):
+                        metadata.append('borrow_lock:1')
+                    break
+
+        primary_field_info = IPrimaryFieldInfo(ob)
+        if hasattr(primary_field_info.value, "contentType"):
+            contenttype = primary_field_info.value.contentType
+        else:
+            contenttype = FALLBACK_CONTENTTYPE
+
+        metadata.append('content_type:%s' % contenttype)
+        metadata.append('')
+
+        metadata_s = '\n'.join(metadata).encode('utf-8')
+        metadata_len = len(metadata_s)
+
+        data = primary_field_info.value.data
+        content_len = len(data)
+
+        response.setHeader(
+            'Content-Disposition',
+            'attachment; filename=%s.zem' % ob.getId(),
+        )
+
+        editor._write_metadata(response, metadata_s,
+                               metadata_len + content_len)
+        response.write(data)

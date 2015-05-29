@@ -26,6 +26,7 @@ setup(name='collective.externaleditor',
       install_requires=[
           'setuptools',
           'Products.ExternalEditor>=1.1.0dev',
+          'collective.monkeypatcher',
           # -*- Extra requirements: -*-
       ],
       entry_points="""
