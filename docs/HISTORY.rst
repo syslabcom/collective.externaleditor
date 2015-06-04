@@ -6,7 +6,7 @@ Changelog
 
 - use the recommended way of including Products.CMFCore permissions
   in configure.zcml so it works for all Plone versions [jcerjak]
-- Remove dependency on portal_factory
+- Remove dependency on portal_factory (Plone 5 compatibility)
   [mattss]
 
 1.0.1 - 2012-02-10
