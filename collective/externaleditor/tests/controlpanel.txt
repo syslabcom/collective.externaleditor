@@ -14,7 +14,7 @@ Viewing the externaleditor control panel
 
 Click the cancel button:
 
-    >>> self.browser.getControl(name="form.actions.cancel").click()
+    >>> self.browser.getControl(name="form.buttons.cancel").click()
     >>> self.browser.url.endswith('plone_control_panel')
     True
 

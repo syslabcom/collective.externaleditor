@@ -1,4 +1,4 @@
-<configure 
+<configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="collective.externaleditor">
@@ -8,8 +8,6 @@
       file="externaleditor.png"
       layer="collective.externaleditor.interfaces.IExternalEditorLayer"
       />
-
-  <adapter factory=".controlpanel.ExternalEditorControlPanelAdapter" />
 
   <browser:page
       name="externaleditor-controlpanel"
